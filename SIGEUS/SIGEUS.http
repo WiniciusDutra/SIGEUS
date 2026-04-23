@@ -1,0 +1,6 @@
+@SIGEUS_HostAddress = http://localhost:5008
+
+GET {{SIGEUS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
