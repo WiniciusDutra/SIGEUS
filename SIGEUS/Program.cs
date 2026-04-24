@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using SIGEUS.Application.Services;
+using SIGEUS.Application.Services.Interfaces;
+using SIGEUS.Domain.Interfaces;
 using SIGEUS.Infra.Data;
+using SIGEUS.Infra.Repositories;
 
 namespace SIGEUS;
 
@@ -13,6 +17,12 @@ public class Program
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseSqlite(connectionString));
+        
+        // Registro do Repository
+        builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+        // Registro da Service
+        builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
         builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
