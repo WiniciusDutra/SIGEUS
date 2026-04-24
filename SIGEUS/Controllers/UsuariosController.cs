@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SIGEUS.Application.DTOs;
@@ -42,7 +43,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         return Ok(usuarioRetorno);
     }
     
-    [HttpGet("busca-por-email")]
+    [HttpGet("buscar-usuario-por-email")]
     public async Task<IActionResult> GetByEmail([FromQuery] string email)
     {
         try 
@@ -59,6 +60,51 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(new { msg = ex.Message });
+        }
+    }
+    
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(Guid id, [FromBody] CadastroUsuarioDto dados, [FromQuery] string email, [FromHeader] string senha)
+    {
+        try
+        {
+            await _usuarioService.AlterarUsuarioSeguroAsync(id, email, senha, dados);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, new { msg = ex.Message }); 
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { msg = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { msg = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Inativar(Guid id, [FromBody] ConfirmacaoOperacaoDto confirmacao)
+    {
+        try
+        {
+            await _usuarioService.InativarUsuarioSeguroAsync(id, confirmacao.Email, confirmacao.Senha);
+            return NoContent();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return StatusCode(403, new { msg = ex.Message }); 
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { msg = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { msg = ex.Message });
         }
     }
 }

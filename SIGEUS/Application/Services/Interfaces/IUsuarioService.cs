@@ -8,4 +8,7 @@ public interface IUsuarioService
     Task<Usuario> CadastrarAsync(CadastroUsuarioDto dto);
     Task<Usuario?> BuscarPorEmailAsync(string email);
     Task<Usuario?> BuscarPorIdAsync(Guid id);
+    Task AlterarUsuarioSeguroAsync(Guid id, string emailInformado, string senhaPura,
+        CadastroUsuarioDto novosDados);
+    Task InativarUsuarioSeguroAsync(Guid id, string emailInformado, string senhaPura);
 }

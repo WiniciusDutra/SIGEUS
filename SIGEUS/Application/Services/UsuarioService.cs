@@ -33,7 +33,46 @@ public class UsuarioService: IUsuarioService
     public async Task<Usuario?> BuscarPorEmailAsync(string email)
     {
         if (!email.Contains("@")) throw new ArgumentException("Formato de e-mail inválido.");
-    
         return await _repository.ObterPorEmailAsync(email);
+    }
+    
+    public async Task AlterarUsuarioSeguroAsync(Guid id, string emailInformado, string senhaPura, CadastroUsuarioDto novosDados)
+    {
+        var usuario = await _repository.ObterPorIdAsync(id);
+
+        if (usuario == null || !usuario.Ativo)
+            throw new InvalidOperationException("Usuário não encontrado ou inativo.");
+        
+        if (usuario.Email != emailInformado)
+            throw new UnauthorizedAccessException("E-mail de confirmação incorreto.");
+        
+        bool senhaValida = BCrypt.Net.BCrypt.Verify(senhaPura, usuario.SenhaHash);
+
+        if (!senhaValida)
+            throw new UnauthorizedAccessException("Senha incorreta. Operação não autorizada.");
+        
+        usuario.AlterarDados(novosDados.Nome, novosDados.Cargo, id);
+    
+        await _repository.SalvarAlteracoesAsync();
+    }
+    
+    public async Task InativarUsuarioSeguroAsync(Guid id, string emailInformado, string senhaPura)
+    {
+        var usuario = await _repository.ObterPorIdAsync(id);
+
+        if (usuario == null || !usuario.Ativo)
+            throw new InvalidOperationException("Usuário não encontrado ou inativo.");
+        
+        if (usuario.Email != emailInformado)
+            throw new UnauthorizedAccessException("E-mail de confirmação incorreto.");
+        
+        bool senhaValida = BCrypt.Net.BCrypt.Verify(senhaPura, usuario.SenhaHash);
+
+        if (!senhaValida)
+            throw new UnauthorizedAccessException("Senha incorreta. Operação não autorizada.");
+        
+        usuario.Desativar();
+    
+        await _repository.SalvarAlteracoesAsync();
     }
 }
