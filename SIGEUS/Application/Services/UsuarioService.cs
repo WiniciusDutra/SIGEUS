@@ -24,4 +24,16 @@ public class UsuarioService: IUsuarioService
 
         return novoUsuario;
     }
+    
+    public async Task<Usuario?> BuscarPorIdAsync(Guid id)
+    {
+        return await _repository.ObterPorIdAsync(id);
+    }
+
+    public async Task<Usuario?> BuscarPorEmailAsync(string email)
+    {
+        if (!email.Contains("@")) throw new ArgumentException("Formato de e-mail inválido.");
+    
+        return await _repository.ObterPorEmailAsync(email);
+    }
 }

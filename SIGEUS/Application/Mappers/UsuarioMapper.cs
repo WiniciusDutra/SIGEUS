@@ -24,4 +24,15 @@ public static class UsuarioMapper
             Cargo = entity.Cargo,
         };
     }
+    
+    public static RetornoUsuarioDto ToRetornoUsuarioDto(this Usuario entity)
+    {
+        return new RetornoUsuarioDto
+        {
+            Id = entity.Id,
+            Nome = entity.Nome,
+            Email = entity.Email,
+            Cargo = entity.Cargo,
+        };
+    }
 }
