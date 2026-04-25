@@ -38,10 +38,27 @@ public class Program
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
             builder.Services.AddControllers();
+            
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            //configurando CORS
+            var frontDoBruno = builder.Configuration["FrontendSettings:FrontDoBruno"];
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "FrontDoBrunoPolicy",
+                    policy =>
+                    {
+                        policy.WithOrigins(frontDoBruno!)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
+
             var app = builder.Build();
+            
+            app.UseCors("FrontDoBrunoPolicy");
 
             app.UseMiddleware<ExceptionMiddleware>();
             
@@ -53,11 +70,8 @@ public class Program
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.Run();
 
         }
