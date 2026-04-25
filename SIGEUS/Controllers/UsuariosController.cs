@@ -1,11 +1,7 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SIGEUS.Application.DTOs;
-using SIGEUS.Application.Mappers;
-using SIGEUS.Application.Services;
 using SIGEUS.Application.Services.Interfaces;
-using SIGEUS.Infra.Data;
+
 
 namespace SIGEUS.Controllers;
 
@@ -15,7 +11,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
 {
     private readonly IUsuarioService _usuarioService =  usuarioService;
     
-    [HttpPost("usuario")]
+    [HttpPost]
     public async Task<IActionResult> Usuario([FromBody] CadastroUsuarioDto dto)
     {
         try
@@ -29,7 +25,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         }
     }
     
-    [HttpGet("usuario/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
       
@@ -38,29 +34,26 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         if (usuario == null)
             return NotFound(new { msg = "Usuário não encontrado." });
         
-        var usuarioRetorno = usuario.ToRetornoUsuarioDto();
+        var usuarioRetorno = usuario;
 
         return Ok(usuarioRetorno);
     }
     
-    [HttpGet("buscar-usuario-por-email")]
-    public async Task<IActionResult> GetByEmail([FromQuery] string email)
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] string? email)
     {
-        try 
+        if (!string.IsNullOrEmpty(email))
         {
             var usuario = await _usuarioService.BuscarPorEmailAsync(email);
-
+        
             if (usuario == null)
                 return NotFound(new { msg = $"Nenhum usuário com o e-mail {email} foi encontrado." });
 
-            var usuarioRetorno = usuario.ToRetornoUsuarioDto();
-
-            return Ok(usuarioRetorno);
+            return Ok(usuario);
         }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { msg = ex.Message });
-        }
+        
+        var todos = await _usuarioService.ObterTodosAsync();
+        return Ok(todos);
     }
     
 
@@ -91,8 +84,8 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     {
         try
         {
-            await _usuarioService.InativarUsuarioSeguroAsync(id, confirmacao.Email, confirmacao.Senha);
-            return NoContent();
+            var usuario = await _usuarioService.InativarUsuarioSeguroAsync(id, confirmacao.Email, confirmacao.Senha);
+            return Ok(new { msg = $"Usuário {usuario.Nome} inativado com sucesso!" });
         }
         catch (UnauthorizedAccessException ex)
         {
@@ -105,6 +98,29 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, new { msg = ex.Message });
+        }
+    }
+    
+    [HttpPatch("ativar")]
+    public async Task<IActionResult> Ativar([FromBody] ConfirmacaoOperacaoDto confirmacao)
+    {
+        try
+        {
+            var usuario = await _usuarioService.AtivarUsuarioSeguroAsync(confirmacao.Email, confirmacao.Senha);
+        
+            return Ok(new { msg = $"Usuário {usuario.Nome} reativado com sucesso!" });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { msg = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { msg = ex.Message });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { msg = "Erro interno ao processar a ativação." });
         }
     }
 }
