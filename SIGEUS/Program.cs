@@ -6,6 +6,7 @@ using SIGEUS.Infra.Data;
 using SIGEUS.Infra.Repositories;
 using Serilog;
 using Serilog.Formatting.Json;
+using SIGEUS.Middlewares;
 
 namespace SIGEUS;
 
@@ -22,7 +23,6 @@ public class Program
         try
         {
             Log.Information("Iniciando a API SIGEUS...");
-            
             
             builder.Host.UseSerilog();
 
@@ -43,6 +43,8 @@ public class Program
 
             var app = builder.Build();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+            
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -54,7 +56,6 @@ public class Program
 
             app.UseAuthorization();
 
-            //app.UseMiddleware<SIGEUS.API.Middleware.ExceptionMiddleware>();
             app.MapControllers();
 
             app.Run();

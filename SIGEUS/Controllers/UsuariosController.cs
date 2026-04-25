@@ -45,7 +45,6 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         if (!string.IsNullOrEmpty(email))
         {
             var usuario = await _usuarioService.BuscarPorEmailAsync(email);
-        
             if (usuario == null)
                 return NotFound(new { msg = $"Nenhum usuário com o e-mail {email} foi encontrado." });
 
@@ -82,45 +81,14 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Inativar(Guid id, [FromBody] ConfirmacaoOperacaoDto confirmacao)
     {
-        try
-        {
-            var usuario = await _usuarioService.InativarUsuarioSeguroAsync(id, confirmacao.Email, confirmacao.Senha);
-            return Ok(new { msg = $"Usuário {usuario.Nome} inativado com sucesso!" });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return StatusCode(403, new { msg = ex.Message }); 
-        }
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(new { msg = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { msg = ex.Message });
-        }
+        var usuario = await _usuarioService.InativarUsuarioSeguroAsync(id, confirmacao.Email, confirmacao.Senha);
+        return Ok(new { msg = $"Usuário {usuario.Nome} inativado com sucesso!" });
     }
     
     [HttpPatch("ativar")]
     public async Task<IActionResult> Ativar([FromBody] ConfirmacaoOperacaoDto confirmacao)
     {
-        try
-        {
-            var usuario = await _usuarioService.AtivarUsuarioSeguroAsync(confirmacao.Email, confirmacao.Senha);
-        
-            return Ok(new { msg = $"Usuário {usuario.Nome} reativado com sucesso!" });
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            return Unauthorized(new { msg = ex.Message });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { msg = ex.Message });
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, new { msg = "Erro interno ao processar a ativação." });
-        }
+        var usuario = await _usuarioService.AtivarUsuarioSeguroAsync(confirmacao.Email, confirmacao.Senha);
+        return Ok(new { msg = $"Usuário {usuario.Nome} reativado com sucesso!" });
     }
 }

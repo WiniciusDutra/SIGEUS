@@ -12,7 +12,7 @@ public class UsuarioRepository(AppDbContext context) : IUsuarioRepository
     public async Task<Usuario?> ObterPorIdAsync(Guid id) 
         => await _context.Usuario.FirstOrDefaultAsync(u => u.Id == id);
 
-    public async Task<Usuario?> ObterPorEmailAsync(string email) 
+    public async Task<Usuario?> ObterPorEmailAsync(string email)
         => await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
 
     public async Task<IEnumerable<Usuario>> ObterTodosAsync() 
