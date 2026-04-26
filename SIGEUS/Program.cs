@@ -5,7 +5,6 @@ using SIGEUS.Domain.Interfaces;
 using SIGEUS.Infra.Data;
 using SIGEUS.Infra.Repositories;
 using Serilog;
-using Serilog.Formatting.Json;
 using SIGEUS.Middlewares;
 
 namespace SIGEUS;
@@ -36,8 +35,17 @@ public class Program
 
             // Registro da Service
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-
+    
+            // Adiciona o exception filter individualmente nos endpoints
             builder.Services.AddControllers();
+            builder.Services.AddScoped<Filters.SigeusExceptionFilter>();
+            builder.Services.AddScoped<Filters.ValidarEmailAttribute>();
+            
+            // Adiciona o exception filter globalmente
+            //builder.Services.AddControllers(options =>
+            //{
+            //    options.Filters.Add<Filters.SigeusExceptionFilter>();
+            //});
             
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
@@ -56,10 +64,27 @@ public class Program
                     });
             });
 
+            
             var app = builder.Build();
             
-            app.UseCors("FrontDoBrunoPolicy");
+            app.Lifetime.ApplicationStarted.Register(() =>
+            {
+                var addressFeature = app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.Server.IServer>()
+                    .Features.Get<Microsoft.AspNetCore.Hosting.Server.Features.IServerAddressesFeature>();
 
+                if (addressFeature != null)
+                {
+                    foreach (var address in addressFeature.Addresses)
+                    {
+                        Log.Information("Aplicação rodando em {Address}", address);
+                    }
+                }
+            });
+            app.UseHttpsRedirection();
+            
+            app.UseCors("FrontDoBrunoPolicy");
+            
+            //Registrando middleware de tratamento global de exceções
             app.UseMiddleware<ExceptionMiddleware>();
             
             // Configure the HTTP request pipeline.
@@ -68,8 +93,7 @@ public class Program
                 app.MapOpenApi();
                 app.UseSwaggerUI(options => { options.SwaggerEndpoint("/openapi/v1.json", "API v1"); });
             }
-
-            app.UseHttpsRedirection();
+            
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

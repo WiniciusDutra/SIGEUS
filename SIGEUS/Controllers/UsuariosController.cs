@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SIGEUS.Application.DTOs;
 using SIGEUS.Application.Services.Interfaces;
+using SIGEUS.Filters;
 
 
 namespace SIGEUS.Controllers;
@@ -12,6 +13,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     private readonly IUsuarioService _usuarioService =  usuarioService;
     
     [HttpPost]
+    [ServiceFilter(typeof(ValidarEmailAttribute))]
     public async Task<IActionResult> Usuario([FromBody] CadastroUsuarioDto dto)
     {
         try
@@ -40,6 +42,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     }
     
     [HttpGet]
+   [ServiceFilter(typeof(SigeusExceptionFilter))]
     public async Task<IActionResult> Get([FromQuery] string? email)
     {
         if (!string.IsNullOrEmpty(email))

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SIGEUS.Middlewares;
 
@@ -33,9 +34,15 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         };
 
         context.Response.StatusCode = statusCode;
-
-        var response = new { msg = exception.Message };
-        var json = JsonSerializer.Serialize(response);
+        
+        var resultado = new ObjectResult(new 
+        { 
+            msg = exception.Message,
+        })
+        {
+            StatusCode = statusCode
+        };
+        var json = JsonSerializer.Serialize(resultado);
 
         return context.Response.WriteAsync(json);
     }
