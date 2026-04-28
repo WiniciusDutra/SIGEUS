@@ -1,6 +1,87 @@
 @SIGEUS_HostAddress = http://localhost:5008
 
-GET {{SIGEUS_HostAddress}}/api/usuarios/f537fec4-33fb-4e96-b6eb-936ebc7c5e54
+@UsuarioId = f537fec4-33fb-4e96-b6eb-936ebc7c5e54
+@EmailTeste = fulanodetal@gmail.com
+
+### Listar todos os usuários ativos
+GET {{SIGEUS_HostAddress}}/api/usuarios
 Accept: application/json
 
 ###
+
+### Buscar usuário por E-mail (Query Parameter)
+GET {{SIGEUS_HostAddress}}/api/usuarios?email={{EmailTeste}}
+Accept: application/json
+
+###
+
+### Buscar usuário por ID (Path Parameter)
+GET {{SIGEUS_HostAddress}}/api/usuarios/{{UsuarioId}}
+Accept: application/json
+
+###
+
+### Listar apenas os documentos de um usuário
+GET {{SIGEUS_HostAddress}}/api/usuarios/{{UsuarioId}}/documentos
+Accept: application/json
+
+###
+
+### Cadastrar um novo usuário (com documentos opcionais)
+POST {{SIGEUS_HostAddress}}/api/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Joao das Colves",
+  "email": "joao.colves@sigeus.com",
+  "senha": "123456",
+  "cargo": "Analista",
+  "documentos": [
+    {
+      "nome": "contrato",
+      "extensao": "pdf",
+      "tamanho": 0.5
+    },
+    {
+      "nome": "planilha",
+      "extensao": "xlsx",
+      "tamanho": 1.7
+    }
+  ]
+}
+
+###
+
+### Atualizar usuário (Path + Query + Header + Body)
+PUT {{SIGEUS_HostAddress}}/api/usuarios/{{UsuarioId}}?email={{EmailTeste}}
+senha: senha_atual_aqui
+Content-Type: application/json
+
+{
+  "nome": "Joao das Colves Atualizado",
+  "email": "joao.colves@sigeus.com",
+  "senha": "123456",
+  "cargo": "Ass. Senior Nível II"
+}
+
+###
+
+### Inativar usuário (DELETE com Body)
+DELETE {{SIGEUS_HostAddress}}/api/usuarios/{{UsuarioId}}
+Content-Type: application/json
+
+{
+  "email": "{{EmailTeste}}",
+  "senha": "123456"
+}
+
+###
+
+### Reativar usuário (PATCH)
+PATCH {{SIGEUS_HostAddress}}/api/usuarios/ativar
+Content-Type: application/json
+
+{
+  "email": "{{EmailTeste}}",
+  "senha": "123456"
+}
