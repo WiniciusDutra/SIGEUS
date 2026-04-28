@@ -12,23 +12,24 @@ Projeto com finalidade educacional para demosntração de API REST com algumas f
 - Validação via Action Filters e Middlewares customizados;
 
 ## 🛠️ dependências
-> BCrypt.Net-Next                            4.1.0 
-> Microsoft.AspNetCore.OpenApi              10.0.6
-> Microsoft.EntityFrameworkCore.Design      10.0.7
-> Microsoft.EntityFrameworkCore.Sqlite      10.0.7
-> Serilog.AspNetCore                        10.0.0
-> Serilog.Settings.Configuration            10.0.0
-> Serilog.Sinks.File                         7.0.0 
-> Swashbuckle.AspNetCore.SwaggerUI          10.1.7
+- BCrypt.Net-Next                            4.1.0 
+- Microsoft.AspNetCore.OpenApi              10.0.6
+- Microsoft.EntityFrameworkCore.Design      10.0.7
+- Microsoft.EntityFrameworkCore.Sqlite      10.0.7
+- Serilog.AspNetCore                        10.0.0
+- Serilog.Settings.Configuration            10.0.0
+- Serilog.Sinks.File                         7.0.0 
+- Swashbuckle.AspNetCore.SwaggerUI          10.1.7
 
 ## 🛣️ Documentação das Rotas
 Todas as respostas de sucesso seguem o padrão de envelope:
-
+'
 {
   "dados_resposta": { ... },
   "timestamp_resposta": "dd/MM/yyyy HH:mm:ss",
   "tempo_da_resposta": "X ms"
 }
+'
 
   Método    Rota                          Descrição                                                 Parâmetros
 > POST     /api/usuarios                  Cadastra um novo usuário e seus documentos.               Body: CadastroUsuarioDto
