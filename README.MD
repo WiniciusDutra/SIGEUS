@@ -30,14 +30,17 @@ Todas as respostas de sucesso seguem o padrão de envelope:
   "tempo_da_resposta": "X ms"
 }
 
-  Método    Rota                          Descrição                                                 Parâmetros
-> POST     /api/usuarios                  Cadastra um novo usuário e seus documentos.               Body: CadastroUsuarioDto
-> GET      /api/usuarios                  Lista todos os usuários ativos ou filtra por e-mail.      Query: email (opcional)
-> GET      /api/usuarios/{id}             Obtém detalhes de um usuário específico pelo GUID.        Path: id
-> PUT      /api/usuarios/{id}             Atualiza usuário com validação de segurança.              Path: id; Query: email; Header: senha; Body: CadastroUsuarioDto
-> DELETE   /api/usuarios/{id}             Inativa um usuário do sistema.                            Path: id; Body: ConfirmacaoOperacaoDto
-> PATCH    /api/usuarios/ativar           Reativa um usuário inativo.                               Body: ConfirmacaoOperacaoDto
-> GET      /api/usuarios/{id}/documentos  Retorna apenas a lista de documentos de um usuário.       Path: id (Guid)
+## 📋 Endpoints
+
+| Método | Rota | Descrição | Parâmetros
+| :---  :--- | :--- | :--- |
+| > POST |/api/usuarios | Cadastra um novo usuário e seus documentos. | Body: CadastroUsuarioDto
+| > GET | /api/usuarios | Lista todos os usuários ativos ou filtra por e-mail. | Query: email (opcional)
+| > GET | /api/usuarios/{id} | Obtém detalhes de um usuário específico pelo GUID. | Path: id
+| > PUT | /api/usuarios/{id} | Atualiza usuário com validação de segurança. | Path: id; Query: email; Header: senha; Body: CadastroUsuarioDto
+| > DELETE | /api/usuarios/{id} | Inativa um usuário do sistema. | Path: id; Body: ConfirmacaoOperacaoDto
+| > PATCH | /api/usuarios/ativar | Reativa um usuário inativo. | Body: ConfirmacaoOperacaoDto
+| > GET | /api/usuarios/{id}/documentos | Retorna apenas a lista de documentos de um usuário. | Path: id (Guid)
 
 ## 📋 Exemplos de Objetos (DTOs)
 
