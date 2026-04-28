@@ -33,6 +33,10 @@ public static class UsuarioMapper
             Nome = entity.Nome,
             Email = entity.Email,
             Cargo = entity.Cargo,
+            CriadoEm = entity.CriadoEm,
+            AtualizadoEm = entity.AtualizadoEm,
         };
     }
+    
+
 }

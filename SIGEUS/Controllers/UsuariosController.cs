@@ -42,7 +42,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     }
     
     [HttpGet]
-   [ServiceFilter(typeof(SigeusExceptionFilter))]
+   //[ServiceFilter(typeof(SigeusExceptionFilter))]
     public async Task<IActionResult> Get([FromQuery] string? email)
     {
         if (!string.IsNullOrEmpty(email))

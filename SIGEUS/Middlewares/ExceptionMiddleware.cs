@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SIGEUS.Middlewares;
@@ -42,7 +43,21 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         {
             StatusCode = statusCode
         };
-        var json = JsonSerializer.Serialize(resultado);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            WriteIndented = true,
+            // https://learn.microsoft.com/en-us/dotnet/api/system.text.json.serialization.jsonignorecondition?view=net-10.0
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            // DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            // adicionar abaixo de documentos:
+            // documento.UsuariosAutorizados = null;
+        };
+        
+        
+        
+        var json = JsonSerializer.Serialize(resultado, options);
 
         return context.Response.WriteAsync(json);
     }

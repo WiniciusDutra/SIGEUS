@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using SIGEUS.Application.Services;
 using SIGEUS.Application.Services.Interfaces;
@@ -5,6 +7,7 @@ using SIGEUS.Domain.Interfaces;
 using SIGEUS.Infra.Data;
 using SIGEUS.Infra.Repositories;
 using Serilog;
+using SIGEUS.Filters;
 using SIGEUS.Middlewares;
 
 namespace SIGEUS;
@@ -29,6 +32,26 @@ public class Program
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite(connectionString));
+            
+            //Config global de serialização json
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                // camelCase nas propriedades
+                options.SerializerOptions.PropertyNamingPolicy =
+                    JsonNamingPolicy.SnakeCaseLower;
+
+                // ignorar propriedades nulas
+                options.SerializerOptions.DefaultIgnoreCondition =
+                    JsonIgnoreCondition.WhenWritingNull;
+
+                // serializar enums como string
+                options.SerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter());
+
+                // aceitar números como strings e vice-versa
+                options.SerializerOptions.NumberHandling =
+                    JsonNumberHandling.AllowReadingFromString;
+            });
 
             // Registro do Repository
             builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -37,15 +60,17 @@ public class Program
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
     
             // Adiciona o exception filter individualmente nos endpoints
-            builder.Services.AddControllers();
-            builder.Services.AddScoped<Filters.SigeusExceptionFilter>();
-            builder.Services.AddScoped<Filters.ValidarEmailAttribute>();
+            //builder.Services.AddControllers();
+            //builder.Services.AddScoped<Filters.SigeusExceptionFilter>();
+            //builder.Services.AddScoped<Filters.ValidarEmailAttribute>();
             
-            // Adiciona o exception filter globalmente
-            //builder.Services.AddControllers(options =>
-            //{
-            //    options.Filters.Add<Filters.SigeusExceptionFilter>();
-            //});
+            // Adiciona filtros globalmente
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<PadronizacaoRespostaFilter>();
+                
+                options.Filters.Add<SigeusExceptionFilter>();
+            });
             
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
@@ -63,7 +88,6 @@ public class Program
                             .AllowAnyMethod();
                     });
             });
-
             
             var app = builder.Build();
             
@@ -80,6 +104,7 @@ public class Program
                     }
                 }
             });
+            
             app.UseHttpsRedirection();
             
             app.UseCors("FrontDoBrunoPolicy");
