@@ -48,14 +48,9 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
             WriteIndented = true,
-            // https://learn.microsoft.com/en-us/dotnet/api/system.text.json.serialization.jsonignorecondition?view=net-10.0
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            // DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            // adicionar abaixo de documentos:
-            // documento.UsuariosAutorizados = null;
         };
-        
-        
+        options.Converters.Add(new SIGEUS.Converters.DateTimeConverter());
         
         var json = JsonSerializer.Serialize(resultado, options);
 

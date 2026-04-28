@@ -7,6 +7,7 @@ using SIGEUS.Domain.Interfaces;
 using SIGEUS.Infra.Data;
 using SIGEUS.Infra.Repositories;
 using Serilog;
+using SIGEUS.Converters;
 using SIGEUS.Filters;
 using SIGEUS.Middlewares;
 
@@ -33,25 +34,25 @@ public class Program
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite(connectionString));
             
-            //Config global de serialização json
-            builder.Services.ConfigureHttpJsonOptions(options =>
-            {
-                // camelCase nas propriedades
-                options.SerializerOptions.PropertyNamingPolicy =
-                    JsonNamingPolicy.SnakeCaseLower;
-
-                // ignorar propriedades nulas
-                options.SerializerOptions.DefaultIgnoreCondition =
-                    JsonIgnoreCondition.WhenWritingNull;
-
-                // serializar enums como string
-                options.SerializerOptions.Converters.Add(
-                    new JsonStringEnumConverter());
-
-                // aceitar números como strings e vice-versa
-                options.SerializerOptions.NumberHandling =
-                    JsonNumberHandling.AllowReadingFromString;
-            });
+            // //Config global de serialização json
+            // builder.Services.ConfigureHttpJsonOptions(options =>
+            // {
+            //     // camelCase nas propriedades
+            //     options.SerializerOptions.PropertyNamingPolicy =
+            //         JsonNamingPolicy.SnakeCaseLower;
+            //
+            //     // ignorar propriedades nulas
+            //     options.SerializerOptions.DefaultIgnoreCondition =
+            //         JsonIgnoreCondition.WhenWritingNull;
+            //
+            //     // serializar enums como string
+            //     options.SerializerOptions.Converters.Add(
+            //         new JsonStringEnumConverter());
+            //
+            //     // aceitar números como strings e vice-versa
+            //     options.SerializerOptions.NumberHandling =
+            //         JsonNumberHandling.AllowReadingFromString;
+            // });
 
             // Registro do Repository
             builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -70,6 +71,13 @@ public class Program
                 options.Filters.Add<PadronizacaoRespostaFilter>();
                 
                 options.Filters.Add<SigeusExceptionFilter>();
+            })
+                .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+                options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
             
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

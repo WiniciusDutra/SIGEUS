@@ -4,17 +4,18 @@ using System.Diagnostics;
 
 namespace SIGEUS.Filters;
 
-public class PadronizacaoRespostaFilter : IAsyncResultFilter
+public class PadronizacaoRespostaFilter : IAsyncActionFilter
 {
-    public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var stopwatch = Stopwatch.StartNew();
-
-        if (context.Result is ObjectResult objectResult)
+        var executedContext = await next();
+        
+        stopwatch.Stop();
+        
+        if (executedContext.Result is ObjectResult objectResult)
         {
             var dadosOriginais = objectResult.Value;
-            
-            stopwatch.Stop(); 
 
             var resultadoFinal = new
             {
@@ -25,7 +26,5 @@ public class PadronizacaoRespostaFilter : IAsyncResultFilter
 
             objectResult.Value = resultadoFinal;
         }
-
-        await next(); 
     }
 }
