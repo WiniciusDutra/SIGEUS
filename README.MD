@@ -23,13 +23,14 @@ Projeto com finalidade educacional para demosntração de API REST com algumas f
 
 ## 🛣️ Documentação das Rotas
 Todas as respostas de sucesso seguem o padrão de envelope:
-'
+
+```json
 {
   "dados_resposta": { ... },
   "timestamp_resposta": "dd/MM/yyyy HH:mm:ss",
   "tempo_da_resposta": "X ms"
 }
-'
+```
 
   Método    Rota                          Descrição                                                 Parâmetros
 > POST     /api/usuarios                  Cadastra um novo usuário e seus documentos.               Body: CadastroUsuarioDto
