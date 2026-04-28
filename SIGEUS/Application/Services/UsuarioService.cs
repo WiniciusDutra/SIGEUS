@@ -13,11 +13,9 @@ public class UsuarioService(IUsuarioRepository repository): IUsuarioService
     public async Task<RetornoUsuarioDto> CadastrarAsync(CadastroUsuarioDto dto)
     {
         var existente = await _repository.ObterPorEmailAsync(dto.Email);
-        if (existente != null)
-            throw new InvalidOperationException("E-mail já cadastrado.");
-        
-        var novoUsuario = new Usuario(dto.Nome, dto.Email, dto.Senha, dto.Cargo);
-
+        if (existente != null) throw new InvalidOperationException("E-mail já cadastrado.");
+            
+        var novoUsuario = dto.ToUsuario(); 
         await _repository.AdicionarAsync(novoUsuario);
         await _repository.SalvarAlteracoesAsync();
 
@@ -42,6 +40,20 @@ public class UsuarioService(IUsuarioRepository repository): IUsuarioService
         if (usuario == null || !usuario.Ativo) return new RetornoUsuarioDto();
         
         return usuario.ToRetornoUsuarioDto();
+    }
+    public async Task<IEnumerable<DocumentoDto>?> ObterDocumentosPorUsuarioAsync(Guid usuarioId)
+    {
+        var usuario = await _repository.ObterPorIdAsync(usuarioId);
+    
+        if (usuario == null || !usuario.Ativo) 
+            return null;
+        
+        return usuario.Documentos.Select(d => new DocumentoDto 
+        { 
+            Nome = d.Nome, 
+            Extensao = d.Extensao, 
+            Tamanho = d.Tamanho 
+        });
     }
     
     public async Task AlterarUsuarioSeguroAsync(Guid id, string emailInformado, string senhaPura, CadastroUsuarioDto novosDados)

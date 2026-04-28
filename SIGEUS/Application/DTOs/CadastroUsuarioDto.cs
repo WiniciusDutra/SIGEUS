@@ -6,4 +6,5 @@ public class CadastroUsuarioDto
     public string Email { get; set; }
     public string Senha { get; set; }
     public string? Cargo { get; set; }
+    public List<DocumentoDto> Documentos { get; set; } = new();
 }

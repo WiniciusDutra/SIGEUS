@@ -7,12 +7,12 @@ public static class UsuarioMapper
 {
     public static Usuario ToUsuario(this CadastroUsuarioDto dto)
     {
-        return new Usuario(
-            dto.Nome,
-            dto.Email, 
-            dto.Senha,
-            dto.Cargo
-            );
+        var usuario = new Usuario(dto.Nome, dto.Email, dto.Senha, dto.Cargo);
+        foreach (var doc in dto.Documentos)
+        {
+            usuario.Documentos.Add(new Documento(doc.Nome, doc.Extensao, doc.Tamanho, usuario.Id));
+        }
+        return usuario;
     }
     
     public static CadastroUsuarioDto ToCadastroUsuarioDto(this Usuario entity)
@@ -35,6 +35,12 @@ public static class UsuarioMapper
             Cargo = entity.Cargo,
             CriadoEm = entity.CriadoEm,
             AtualizadoEm = entity.AtualizadoEm,
+            Documentos = entity.Documentos.Select(d => new DocumentoDto 
+            { 
+                Nome = d.Nome, 
+                Extensao = d.Extensao, 
+                Tamanho = d.Tamanho 
+            }).ToList()
         };
     }
     

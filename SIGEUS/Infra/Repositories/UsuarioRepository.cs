@@ -9,14 +9,24 @@ public class UsuarioRepository(AppDbContext context) : IUsuarioRepository
 {
     private readonly AppDbContext _context = context;
     
-    public async Task<Usuario?> ObterPorIdAsync(Guid id) 
-        => await _context.Usuario.FirstOrDefaultAsync(u => u.Id == id);
+    public async Task<Usuario?> ObterPorIdAsync(Guid id)
+    {
+        return await _context.Usuario
+            .Include(u => u.Documentos)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
 
     public async Task<Usuario?> ObterPorEmailAsync(string email)
-        => await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
+    {
+        return await _context.Usuario
+            .Include(u => u.Documentos)
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
 
     public async Task<IEnumerable<Usuario>> ObterTodosAsync() 
-        => await _context.Usuario.Where(u => u.Ativo).ToListAsync();
+        => await _context.Usuario.
+            Include(u => u.Documentos).
+            Where(u => u.Ativo).ToListAsync();
 
     public async Task AdicionarAsync(Usuario usuario) 
         => await _context.Usuario.AddAsync(usuario);

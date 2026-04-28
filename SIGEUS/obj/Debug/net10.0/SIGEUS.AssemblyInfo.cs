@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SIGEUS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3880d1395c9382b8dfd41c9f885204b95f95ccd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0529dd2dfccf5ed484f6de781f808b106df651d")]
 [assembly: System.Reflection.AssemblyProductAttribute("SIGEUS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SIGEUS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

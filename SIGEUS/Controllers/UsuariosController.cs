@@ -13,7 +13,7 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
     private readonly IUsuarioService _usuarioService =  usuarioService;
     
     [HttpPost]
-    [ServiceFilter(typeof(ValidarEmailAttribute))]
+   // [ServiceFilter(typeof(ValidarEmailAttribute))]
     public async Task<IActionResult> Usuario([FromBody] CadastroUsuarioDto dto)
     {
         try
@@ -39,6 +39,17 @@ public class UsuariosController(IUsuarioService usuarioService): ControllerBase
         var usuarioRetorno = usuario;
 
         return Ok(usuarioRetorno);
+    }
+    
+    [HttpGet("{id}/documentos")]
+    public async Task<IActionResult> GetDocumentos(Guid id)
+    {
+        var documentos = await _usuarioService.ObterDocumentosPorUsuarioAsync(id);
+    
+        if (documentos == null)
+            return NotFound(new { msg = "Usuário não encontrado ou sem documentos." });
+
+        return Ok(documentos);
     }
     
     [HttpGet]

@@ -1,6 +1,6 @@
 @SIGEUS_HostAddress = http://localhost:5008
 
-GET {{SIGEUS_HostAddress}}/weatherforecast/
+GET {{SIGEUS_HostAddress}}/api/usuarios/f537fec4-33fb-4e96-b6eb-936ebc7c5e54
 Accept: application/json
 
 ###

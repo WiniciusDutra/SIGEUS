@@ -13,6 +13,8 @@ public class Usuario
     public DateTime? AtualizadoEm { get; private set; }
     public string? Cargo { get; private set; }
     
+    public ICollection<Documento> Documentos { get; private set; } = new List<Documento>();
+    
     private Usuario() { }
     
     public Usuario(string nome, string email, string senhaPura, string? cargo)
