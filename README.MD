@@ -5,11 +5,11 @@
 Projeto com finalidade educacional para demosntração de API REST com algumas funcionaldiade aplicadas
 
 ## 🛠️ Tecnologias Utilizadas
-> .NET Core 10;
-> Persistência em banco de dados SqLite;
-> Criação do bd com Entity Framework Core e Migrations;
-> Registro de logs com Serilog;
-> Validação via Action Filters e Middlewares customizados;
+- .NET Core 10;
+- Persistência em banco de dados SqLite;
+- Criação do bd com Entity Framework Core e Migrations;
+- Registro de logs com Serilog;
+- Validação via Action Filters e Middlewares customizados;
 
 ## 🛠️ dependências
 > BCrypt.Net-Next                            4.1.0 
